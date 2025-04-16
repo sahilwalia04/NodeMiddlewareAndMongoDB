@@ -79,23 +79,23 @@ app.get("/" ,m1 ,m2 , (req , res )=>{
      console.log(query);
      res.send("<h1>hello user Importand data </h1>")
   })
-app.get("/:id" , (req , res )=>{
-    const id = req.params.id;
-    console.log(id)
-    const user = users.find((user) => user.id == id);
-    if(!user) return res.status(404).json({status : "fail" , message : "User not found"})
-  return res.json(user);
-});
+// app.get("/:id" , (req , res )=>{
+//     const id = req.params.id;
+//     console.log(id)
+//     const user = users.find((user) => user.id == id);
+//     if(!user) return res.status(404).json({status : "fail" , message : "User not found"})
+//   return res.json(user);
+// });
 
 
 
-//  app.post("/users" , (req , res )=>{
-//    const body = req.body;
-//    users.push({...body , id : users.length +1});
-//    fs.writeFile("./MOCK_DATA.json" , JSON.stringify(users), (err ,data) =>{
-//    return  res.json({ status : "success" , id : users.length , data : body})
-//    })
-//  });
+ app.post("/datauser" , (req , res )=>{
+   const body = req.body;
+   users.push({...body , id : users.length +1});
+   fs.writeFile("./MOCK_DATA.json" , JSON.stringify(users), (err ,data) =>{
+   return  res.json({ status : "success" , id : users.length , data : body})
+   })
+ });
 
 
 app.post("/users" , async (req , res)=>{
@@ -120,8 +120,59 @@ app.post("/users" , async (req , res)=>{
     }
 
 })
- app.delete('/users/:id' , async (req,res)=>{
+
+
+app.get("/users" , async (req , res)=>{
+   const id = req.params.id;
+   try{
+    // const user = await UserModel.find(_id: id);
+    // const user = await UserModel.find({name : "sahil"});
+    //  const user = await UserModel.findOneAndDelete({name : "sahil"});   
+    //  const user = await UserModel.findById(id);
+
+    // Operator	Description	Example
+    // $eq	Equal to	{ age: { $eq: 25 } }
+    // $ne	Not equal to	{ status: { $ne: "active" } }
+    // $gt	Greater than	{ age: { $gt: 18 } }
+    // $gte	Greater than or equal to	{ age: { $gte: 18 } }
+    // $lt	Less than	{ age: { $lt: 65 } }
+    // $lte	Less than or equal to	{ age: { $lte: 65 } }
+    // $in	Matches any value in array	{ status: { $in: ["active", "pending"] } }
+    // $nin	Does not match any value in array	{ status: { $nin: ["banned", "deleted"] } }
+    // $and	Combine multiple query conditions (AND)	{ $and: [{ age: { $gte: 18 } }, { status: "active" }] }
+    // $or	Matches any condition (OR)	{ $or: [{ age: { $lt: 18 } }, { status: "inactive" }] }
+    // $not	Negates a query condition	{ age: { $not: { $gt: 18 } } }
+    // $exists	Field exists or not	{ email: { $exists: true } }
+    // $regex	Pattern matching (regular expressions)	{ name: { $regex: /^Shivam/, $options: 'i' } }
+    // $type	Matches documents of a specified type	{ age: { $type: "number" } }
+    // $all	Matches all values in an array	{ tags: { $all: ["nodejs", "mongodb"] } }
+    // $size	Matches arrays with a specific length	{ tags: { $size: 3 } }
+    // $elemMatch	Matches at least one element in an array	{ scores: { $elemMatch: { $gt: 80, $lt: 90 } } }
+
+    const user = await UserModel.find({})
+     return res.json({user})
+   }catch(e){
+      console.log(e);
+      return res.json({success : false , message : "something went wrong"})
+   }
+
+  })
+
+  app.put("/users/:id" , async (req,res)=>{
+    const id = req.params.id;
+    const user = await UserModel.findByIdAndUpdate(id , {name : "shivam"  } , {new : true});
+    return res.json({user});
+  })
+
+  app.delete("/users/:id" , async (req , res)=>{
+    const id = req.params.id;
+    const user = await UserModel.findByIdAndDelete(id);
+    return res.json({user});
+  })
+
+ app.delete('/user/:id' , async (req,res)=>{
   const id = Number(req.params.id);
+  // const user = await UserModel.findOneAndDelete({name : "sahil"});
   const updateuser = users.filter((user) => user.id != id);
    await fs.writeFile('./MOCK_DATA.json' , JSON.stringify(updateuser , null , 2) , (err , data)=>{
      return res.json({ status : `delete success ${id}` });
